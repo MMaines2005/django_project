@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="Description" content="Enter your description here"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<title>Title</title>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header row justify-content-lg-between align-items-end">
+           <h1> Welcome, {{user.first_name}} </h1>
+            <a href="/logout" class="btn btn-danger mr-4">Logout</a>
+        </div>
+    </div>
+    <div class="row h-100 justify-content-between align-items-center">
+        <div class="col-5 h-100 justify-content-between align-items-center">
+            <h1>Add a Favorite Book</h1>
+            <form action="landing/add_book" method="POST">
+                {% csrf_token %}
+                {% for message in messages %}
+                    <p class="text-danger small">{{ message }}</p>
+                {% endfor %}
+                <div class="form-group">
+                    <label for="title">Book Title</label>
+                    <input class="form-control" type="text" name="title">
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" class="form-control" name="description" rows="3"></input>
+                    </div>
+                    <button type="submit" class="btn btn-outline-success">Add Book to list</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-5">
+            <h3>Favorited Books</h3>
+            {% for book in books %}
+            {% if user in book.who_like.all %}
+            <div class="container">
+                <h5><a href="/landing/{{book.id}}">{{book.title}}</a></h5>
+                <p>(added by {{book.uploaded_by.first_name}} {{book.uploaded_by.last_name}})</p>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <h3>Other Books</h3>
+            {% for book in books %}
+            {% if user not in book.who_like.all %}
+            <div class="container">
+                <h5><a href="/landing/{{book.id}}">{{book.title}}</a></h5>
+                <p>(added by {{book.uploaded_by.first_name}} {{book.uploaded_by.last_name}})</p>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+    
+</body>
+</html>

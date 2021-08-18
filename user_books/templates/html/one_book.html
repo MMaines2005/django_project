@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="Description" content="Enter your description here"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<title>Title</title>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header row justify-content-lg-between align-items-end">
+            <h1>Welcome, {{ user.first_name }}</h1>
+            <a href="/landing" class="btn btn-outline-primary">Home</a>
+            <a href="/logout" class="btn btn-danger mr-4">Logout</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-5">
+                <h3>{{book.title}}</h3>
+                <p>Added by: {{book.uploaded_by.first_name}} {{book.uploaded_by.last_name}}</p>
+                <p>Last updated at: {{book.updated_at}}</p>
+                {% if book.uploaded_by.id != request.session.user_id %}
+                <p>Description: {{book.description}}</p>
+                {% else %}
+                <form action="/landing/{{book.id}}/update" method="post">
+                    {% csrf_token %}
+                    <label for="description">Description</label>
+                    <input name="description" class="form-control w-50" placeholder="{{book.description}}">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <a href="/landing/{{book.id}}/delete" role="button" class="btn btn-danger">Delete</a>
+                </form>
+                {% endif %}
+            </div>
+            <div class="col-6 px-2">
+                <h3>Users Who Favorited the Book</h3>
+                <ul>
+                    {% for fav in book.who_like.all %}
+                    <li>{{fav.first_name}} {{fav.last_name}}</li>
+                    {% endfor %}
+                </ul>
+                {% if user in book.who_like.all %}
+                <a href="/unfavorite/{{book.id}}" role="button" class="btn btn-danger">Remove From Favorites</a>
+                {% else %}
+                <a href="/favorite/{{book.id}}" role="button" class="btn btn-warning">Add to Favorites</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+    
+</body>
+</html>
